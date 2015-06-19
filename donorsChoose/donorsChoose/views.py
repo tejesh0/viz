@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from pymongo import MongoClient
 import pymongo
-# from pymongo import Connection
 
 
 MONGODB_HOST = 'localhost'
@@ -12,13 +12,15 @@ FIELDS = {'school_state': True, 'resource_type': True, 'poverty_level': True, 'd
 
 
 def api(request):
-    connection = pymongo.Connection(MONGODB_HOST, MONGODB_PORT)
+    connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
     collection = connection[DBS_NAME][COLLECTION_NAME]
-    projects = collection.find(fields=FIELDS)
+    projects = collection.find(projection=FIELDS)
+    print projects
     json_projects = []
     for project in projects:
+        print project
         json_projects.append(project)
-    return JsonResponse(json_projects)
+    return JsonResponse(json_projects, safe=False)
 
 
 def home(request):
